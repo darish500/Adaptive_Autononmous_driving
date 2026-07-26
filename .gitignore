@@ -1,0 +1,11 @@
+# Python bytecode cache
+__pycache__/
+*.pyc
+
+# pytest cache
+.pytest_cache/
+
+# colcon build artifacts (created at workspace root, but ignore here too for safety)
+build/
+install/
+log/
