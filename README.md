@@ -1,3 +1,115 @@
+# Project ORION — ROS 2 Foundation
+
+This section documents the current implemented milestone: the ORION ROS 2
+Foundation and System State Manager. For the full project vision, philosophy,
+and long-term roadmap, see below.
+
+## Packages
+
+- **`project_orion`** — Python (ament_python) package containing the system
+  state manager node, state monitor node, launch file, and tests.
+- **`project_orion_interfaces`** — C++ (ament_cmake) package containing the
+  custom message and service definitions used for state communication.
+
+## Architecture
+
+- `orion_state_machine.py` — pure Python, no ROS 2 dependency, defines the
+  8 ORION system states and the legal transitions between them. Fully unit
+  tested in isolation.
+- `state_manager_node.py` — wraps the state machine in a ROS 2 node. Exposes
+  the `/orion/request_state_transition` service (other nodes request state
+  changes; the manager validates and accepts/rejects them) and publishes the
+  current state on `/orion/system_state` whenever it changes.
+- `state_monitor_node.py` — a minimal, independent node that subscribes to
+  `/orion/system_state` and logs updates, demonstrating that other nodes can
+  observe ORION's state without any knowledge of the state manager's internals.
+- `orion_foundation.launch.py` — starts both nodes together.
+### System States
+
+```text
+OFF, BOOTING, INITIALIZING, READY, MISSION, EMERGENCY, RECOVERY, SHUTDOWN
+```
+
+### Legal Transitions
+
+```text
+OFF -> BOOTING
+BOOTING -> INITIALIZING, EMERGENCY
+INITIALIZING -> READY, EMERGENCY
+READY -> MISSION, SHUTDOWN, EMERGENCY
+MISSION -> READY, EMERGENCY, RECOVERY
+EMERGENCY -> RECOVERY, SHUTDOWN
+RECOVERY -> READY, EMERGENCY, SHUTDOWN
+SHUTDOWN -> OFF
+```
+
+EMERGENCY is reachable from nearly any active state, but can only be exited
+through RECOVERY or SHUTDOWN — never directly back into MISSION — enforcing a
+deliberate recovery step before resuming a mission after a fault.
+## Architectural Decisions
+
+- **State transitions are externally requested (service-based), not
+  internally auto-advanced.** Other nodes (or an operator) call
+  `/orion/request_state_transition`; the manager only changes state on a
+  valid request. Internally-driven auto-transitions (e.g. auto-advancing
+  through boot stages) are a planned future addition on top of this.
+- **State constants are duplicated as plain integers** across
+  `orion_state_machine.py`, `OrionState.msg`, and
+  `RequestStateTransition.srv`, rather than sharing a single generated
+  source. This was a deliberate simplicity tradeoff for this milestone: the
+  three definitions must be kept in sync manually if a state is ever added,
+  renamed, or renumbered.
+- **State machine logic is kept ROS 2-free** so it can be unit tested
+  directly with pytest, without spinning up any ROS 2 node or middleware.
+
+## Building
+
+From a clean clone:
+
+```bash
+cd ~/ros2_ws
+colcon build --packages-select project_orion_interfaces project_orion
+source install/setup.bash
+```
+
+## Running
+
+**Option A — launch both nodes together:**
+
+```bash
+ros2 launch project_orion orion_foundation.launch.py
+```
+
+**Option B — run nodes individually (separate terminals, each sourced):**
+
+```bash
+ros2 run project_orion state_manager_node
+ros2 run project_orion state_monitor_node
+```
+
+**Requesting a state transition** (from any sourced terminal, while the
+manager is running):
+
+```bash
+ros2 service call /orion/request_state_transition \
+  project_orion_interfaces/srv/RequestStateTransition "{requested_state: 1}"
+```
+
+State values: `OFF=0, BOOTING=1, INITIALIZING=2, READY=3, MISSION=4,
+EMERGENCY=5, RECOVERY=6, SHUTDOWN=7`
+
+## Testing
+
+```bash
+cd src/project_orion/project_orion
+python3 -m pytest test/test_orion_state_machine.py -v
+```
+
+---
+
+# Project ORION (Full Vision)
+
+*(existing vision document content continues below unchanged)*
 # Project ORION
 
 ### Engineering the Future of Intelligent Autonomous Systems
