@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'state_manager_node = project_orion.state_manager_node:main',
+            'state_monitor_node = project_orion.state_monitor_node:main',
         ],
     },
 )
