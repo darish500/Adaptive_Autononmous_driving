@@ -27,7 +27,7 @@ Visualization Manager:
       Show Arrows: true
 
   Global Options:
-    Fixed Frame: base_link
+    Fixed Frame: base_footprint
     Background Color: 48; 48; 48
 
   Tools:
