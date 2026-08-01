@@ -1,3 +1,29 @@
+# Project ORION — Digital Twin Foundation
+
+Stage 3 of Project ORION: a Gazebo-based digital twin that spawns the
+ORION vehicle into a test world and publishes simulated IMU, 2D LiDAR,
+and RGB camera data. No autonomy, control, or `ros2_control` — this
+milestone is publishing-only, laying the sensor/physics foundation the
+next milestone (vehicle control) will build on.
+
+Full details — architecture, build/launch instructions, topic list,
+known limitations, and validation results — live in
+[`project_orion_simulation/README.md`](project_orion_simulation/README.md).
+
+**Quick start:**
+```bash
+colcon build --packages-select project_orion_description project_orion_simulation
+source install/setup.bash
+ros2 launch project_orion_simulation orion_digital_twin.launch.py
+```
+
+**Key design decision:** the new `project_orion_simulation` package
+composes the Stage 2 vehicle description via `xacro:include` rather than
+modifying it — `project_orion_description` remains completely untouched
+by this milestone.
+
+**Simulator:** Gazebo Sim (`gz sim`) via `ros_gz_sim`/`ros_gz_bridge` —
+not Gazebo Classic, which isn't available for this ROS 2 distribution.
 # Project ORION — Digital Vehicle Foundation
 
 This section documents the second implemented milestone: the ORION Digital
