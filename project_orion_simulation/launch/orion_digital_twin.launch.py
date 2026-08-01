@@ -2,9 +2,11 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription,DeclareLaunchArgument
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
+from launch.conditions import IfCondition
+from launch.substitutions import LaunchConfiguration
 
 import xacro
 
@@ -17,7 +19,7 @@ def generate_launch_description():
     robot_description= {'robot_description': robot_description_config.toxml()}
     world_file = os.path.join(sim_pkg_share, 'worlds', 'orion_world.world')
     bridge_config_file = os.path.join(sim_pkg_share, 'config' , 'orion_gz_bridge.yaml')
-
+    rviz_config_file = os.path.join(description_pkg_share,'rviz' , 'orion_description.rviz')
 
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -26,6 +28,11 @@ def generate_launch_description():
         ),
         launch_arguments={
             'gz_args':world_file}.items(),
+    )
+    use_rviz_arg = DeclareLaunchArgument(
+        'use_rviz',
+        default_value='true',
+        description='start Rviz2 alongside Gazebo. '
     )
 
     robot_state_publisher = Node(
@@ -70,10 +77,22 @@ def generate_launch_description():
         parameters=[{'use_sim_time': True}],
     )
 
+    rviz = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        output='screen',
+        arguments=['-d',rviz_config_file],
+        parameters=[{'use_sim_time':True}],
+        condition=IfCondition(LaunchConfiguration('use_rviz')),
+    )
+
     return LaunchDescription([
         gazebo,
+        use_rviz_arg,
         robot_state_publisher,
         spawn_entity,
         joint_state_publisher,
         ros_gz_bridge,
+        rviz,
     ])

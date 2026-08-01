@@ -1,0 +1,30 @@
+orion_simulation:
+  use_sim_time: true
+
+  spawn:
+    entity_name: "orion_vehicle"
+    x: 0.0
+    y: 0.0
+    z: 0.15
+    yaw: 0.0 
+
+  sensors:
+    imu:
+      update_rate_hz: 100
+      topic: "/orion/imu/data"
+      frame_id: "imu_link"
+
+    lidar:
+      update_rate_hz: 10
+      samples: 360
+      range_min_m: 0.12
+      range_max_m: 12.0
+      topic: "/orion/scan"
+      frame_id: "lidar_link"
+
+    camera:
+      update_rate_hz: 30
+      width_px: 640
+      height_px: 480
+      topic: "/orion/camera/image_raw"
+      frame_id: "camera_link"
