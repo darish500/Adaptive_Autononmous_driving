@@ -212,4 +212,46 @@
     <child link="camera_link"/>
     <origin xyz="${chassis_length/2} 0 ${camera_size/2}" rpy="0 0 0"/>
   </joint>
+
+  <ros2_control name="OrionSystem" type="system">
+    <hardware>
+      <plugin>mock_components/GenericSystem</plugin>
+    </hardware>
+
+    <joint name="rear_left_wheel_joint">
+      <command_interface name="velocity"/>
+      <state_interface name="velocity"/>
+      <state_interface name="position"/>
+    </joint>
+
+    <joint name="rear_right_wheel_joint">
+      <command_interface name="velocity"/>
+      <state_interface name="velocity"/>
+      <state_interface name="position"/>
+    </joint>
+
+    <joint name= "front_left_wheel_joint">
+      <command_interface name="velocity"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name= "front_right_wheel_joint"/>
+      <command_interface name="velocity"/>
+      <state_interface name="velocity"/>
+      <state_interface name="position"/>
+    <joint>
+
+    <joint name = "front_left_steering_joint"/>
+      <command_interface name="velocity"/>
+      <state_interface nsme="position"/>
+    </joint>
+
+    <joint name = "front_right_steering_joint">
+      <command_interface name= "velocity"/>
+      <state_interface name="position"/>
+    </joint>
+
+  </ros2_control>
+  
 </robot>
