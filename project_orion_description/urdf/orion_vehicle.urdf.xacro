@@ -18,6 +18,7 @@
 
   <!-- Ground clearance: distance from ground to base_link origin -->
   <xacro:property name="ground_clearance" value="${wheel_radius}"/>
+  <xacro:arg name="use_mock" default="true"/>
 
   <!-- ==================== Materials ==================== -->
   <material name="orion_body_color">
@@ -215,14 +216,21 @@
 
   <ros2_control name="OrionSystem" type="system">
     <hardware>
-      <plugin>mock_components/GenericSystem</plugin>
-    </hardware>
+      <xacro:if value="$(arg use_mock)">
+        <plugin>mock_components/GenericSystem</plugin>
+      </xacro:if>
 
+      <xacro:unless value="$(arg use_mock)">
+        <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+      </xacro:unless>
+    </hardware>
+    
     <joint name="rear_left_wheel_joint">
       <command_interface name="velocity"/>
       <state_interface name="velocity"/>
       <state_interface name="position"/>
     </joint>
+
 
     <joint name="rear_right_wheel_joint">
       <command_interface name="velocity"/>
@@ -230,28 +238,28 @@
       <state_interface name="position"/>
     </joint>
 
-    <joint name= "front_left_wheel_joint">
+    <joint name="front_left_wheel_joint">
       <command_interface name="velocity"/>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
 
-    <joint name= "front_right_wheel_joint"/>
+    <joint name="front_right_wheel_joint">
       <command_interface name="velocity"/>
       <state_interface name="velocity"/>
       <state_interface name="position"/>
-    <joint>
-
-    <joint name = "front_left_steering_joint"/>
-      <command_interface name="velocity"/>
-      <state_interface nsme="position"/>
     </joint>
 
-    <joint name = "front_right_steering_joint">
-      <command_interface name= "velocity"/>
+    <joint name="front_left_steering_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+    </joint>
+
+    <joint name="front_right_steering_joint">
+      <command_interface name="position"/>
       <state_interface name="position"/>
     </joint>
 
   </ros2_control>
-  
+
 </robot>

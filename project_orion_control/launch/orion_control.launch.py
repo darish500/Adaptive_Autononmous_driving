@@ -42,20 +42,28 @@ def generate_launch_description():
     )
 
 
-    rear_wheel_velocity_controller_spawner=  Node(
-
+    wheel_velocity_controller_spawner=  Node(
         package= 'controller_manager',
         executable= 'spawner',
-        name= 'rear_wheel_velocity_controller_spawner',
+        name= 'wheel_velocity_controller_spawner',
         output= 'screen',
-        arguments=['rear_wheel_velocity_controller'],
+        arguments= ['wheel_velocity_controller'],
     )
 
+    steering_position_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        name='steering_position_controller_spawner',
+        output= 'screen',
+        arguments= ['steering_position_controller'],
+    )
+    
     return LaunchDescription(
         [
             robot_state_publisher,
             controller_manager,
             joint_state_broadcaster_spawner,
-            rear_wheel_velocity_controller_spawner,
+            wheel_velocity_controller_spawner,
+            steering_position_controller_spawner,
         ]
     )

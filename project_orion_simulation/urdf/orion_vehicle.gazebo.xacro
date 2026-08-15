@@ -3,6 +3,14 @@
 
   <xacro:include filename="$(find project_orion_description)/urdf/orion_vehicle.urdf.xacro"/>
 
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find project_orion_control)/config/orion_controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+
   <gazebo reference="base_link">
     <material>Gazebo/Blue</material>
     <mu1>0.3</mu1>

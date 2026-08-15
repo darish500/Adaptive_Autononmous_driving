@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<sdf version="1.10">
+  <world name="test_world">
+    <physics name="1ms" type="ignored">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+
+    <model name="test_model">
+      <static>true</static>
+      <link name="link">
+        <inertial>
+          <mass>0.1</mass>
+        </inertial>
+      </link>
+
+      <joint name="test_joint" type="revolute">
+        <parent>world</parent>
+        <child>link</child>
+        <axis>
+          <xyz>0 0 1</xyz>
+        </axis>
+      </joint>
+
+      <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+        <parameters>/home/inspiredkhalid/ros2_ws/install/project_orion_control/share/project_orion_control/config/orion_controllers.yaml</parameters>
+      </plugin>
+
+      <ros2_control name="TestSystem" type="system">
+        <hardware>
+          <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </hardware>
+        <joint name="test_joint">
+          <command_interface name="velocity"/>
+          <state_interface name="velocity"/>
+          <state_interface name="position"/>
+        </joint>
+      </ros2_control>
+    </model>
+  </world>
+</sdf>

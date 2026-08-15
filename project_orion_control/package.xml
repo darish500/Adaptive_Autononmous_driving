@@ -16,6 +16,11 @@
   <exec_depend>ros2_control</exec_depend>
   <exec_depend>ros2_controllers</exec_depend>
   <exec_depend>project_orion_description</exec_depend>
+  <exec_depend>project_orion_simulation</exec_depend>\
+  <exec_depend>ros_gz_sim</exec_depend>
+  <exec_depend>ros_gz_bridge</exec_depend>
+  <exec_depend>robor_state_publisher</exec_depend>
+  
 
   <export>
     <build_type>ament_cmake</build_type>
